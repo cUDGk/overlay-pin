@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="OverlayPin"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="画面に常時表示する画像を設定。プレビューは実画面比率。"
+            android:textSize="13sp"
+            android:textColor="#666"
+            android:paddingBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:background="#F0F0F5"/>
+
+        <Button
+            android:id="@+id/btn_pick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="画像を選択"
+            android:layout_marginTop="16dp"/>
+
+        <!-- Size controls moved ABOVE the preview so adjusting doesn't scroll
+             the preview out of view. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/lbl_size"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="サイズ: 100%"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btn_size_minus"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="−"
+                android:textSize="22sp"
+                android:padding="0dp"/>
+
+            <Button
+                android:id="@+id/btn_size_plus"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="＋"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_marginStart="6dp"/>
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seek_size"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:max="38"
+            android:progress="18"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5% 刻み（10%〜200%）"
+            android:textSize="11sp"
+            android:textColor="#999"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="半透明モード"
+                android:textSize="14sp"/>
+            <Switch
+                android:id="@+id/sw_translucent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="プレビュー — タップ/ドラッグで位置"
+            android:textSize="13sp"
+            android:textStyle="bold"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="8dp">
+
+            <FrameLayout
+                android:id="@+id/preview_frame"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/preview_bg">
+
+                <ImageView
+                    android:id="@+id/preview_img"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:scaleType="fitCenter"/>
+
+            </FrameLayout>
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/btn_access"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accessibility を有効化（重要）"
+            android:layout_marginTop="16dp"/>
+
+        <Button
+            android:id="@+id/btn_perm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="オーバーレイ権限を許可"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="表示開始"
+            android:layout_marginTop="12dp"/>
+
+        <Button
+            android:id="@+id/btn_stop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="表示停止"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/btn_miui_perm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="（Xiaomi/MIUI）詳細権限を開く"
+            android:textSize="12sp"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:padding="12dp"
+            android:background="#FFF8E1"
+            android:textSize="12sp"
+            android:text="💡 右上スワイプ → クイック設定の編集から「オーバーレイ」タイルを追加するとワンタップON/OFF。\n\nXiaomi/MIUI特有: オーバーレイがうっすら半透明に見える場合は、設定→アプリ→OverlayPin→その他の権限 で「ポップアップウィンドウを表示」「バックグラウンドでポップアップを表示」を有効化してください。また「ゲームターボ」「GameMode」がONだとゲーム中にオーバーレイが制限される場合があります。"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OverlayPin</string>
+    <string name="tile_label">オーバーレイ</string>
+    <string name="channel_name">Overlay</string>
+    <string name="accessibility_description">OverlayPin が画面上に画像/動画オーバーレイを描画するために使います。MIUI など一部ROMでは Accessibility 経由でないとオーバーレイが半透明に見えるため。</string>
+</resources>
