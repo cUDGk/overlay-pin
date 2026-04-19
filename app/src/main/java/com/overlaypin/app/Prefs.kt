@@ -9,10 +9,10 @@ object Prefs {
     private const val KEY_SIZE = "size_pct"
     private const val KEY_FX = "frac_x"
     private const val KEY_FY = "frac_y"
-    private const val KEY_TRANSLUCENT = "translucent"
+    private const val KEY_OPACITY = "opacity_pct"
     private const val KEY_IS_VIDEO = "is_video"
     private const val KEY_VERSION = "prefs_version"
-    private const val CURRENT_VERSION = 3
+    private const val CURRENT_VERSION = 4
 
     private fun sp(ctx: Context) = ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE)
 
@@ -20,7 +20,7 @@ object Prefs {
         val s = sp(ctx)
         if (s.getInt(KEY_VERSION, 0) < CURRENT_VERSION) {
             s.edit()
-                .putBoolean(KEY_TRANSLUCENT, false)
+                .putInt(KEY_OPACITY, 100)  // default fully opaque on upgrade
                 .putInt(KEY_VERSION, CURRENT_VERSION)
                 .apply()
         }
@@ -52,8 +52,10 @@ object Prefs {
             .apply()
     }
 
-    fun isTranslucent(ctx: Context): Boolean = sp(ctx).getBoolean(KEY_TRANSLUCENT, false)
-    fun setTranslucent(ctx: Context, on: Boolean) {
-        sp(ctx).edit().putBoolean(KEY_TRANSLUCENT, on).apply()
+    /** Opacity percent 0..100, default 100 (fully opaque). */
+    fun getOpacityPct(ctx: Context): Int = sp(ctx).getInt(KEY_OPACITY, 100).coerceIn(0, 100)
+    fun setOpacityPct(ctx: Context, pct: Int) {
+        sp(ctx).edit().putInt(KEY_OPACITY, pct.coerceIn(0, 100)).apply()
     }
+    fun getAlpha(ctx: Context): Float = getOpacityPct(ctx) / 100f
 }

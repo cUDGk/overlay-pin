@@ -208,9 +208,9 @@ class OverlayAccessibilityService : AccessibilityService() {
         p.x = centerX - side / 2
         p.y = centerY - side / 2
 
-        val translucent = Prefs.isTranslucent(this)
-        v.alpha = if (translucent) 0.5f else 1.0f
-        if (v is ImageView) v.imageAlpha = if (translucent) 128 else 255
+        val alpha = Prefs.getAlpha(this)
+        v.alpha = alpha
+        if (v is ImageView) v.imageAlpha = (alpha * 255).toInt().coerceIn(0, 255)
         v.background = null
         p.alpha = 1f
 

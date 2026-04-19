@@ -99,18 +99,49 @@
             android:layout_marginTop="14dp"
             android:orientation="horizontal"
             android:gravity="center_vertical">
+
             <TextView
+                android:id="@+id/lbl_opacity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="半透明モード"
-                android:textSize="14sp"/>
-            <Switch
-                android:id="@+id/sw_translucent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checked="false"/>
+                android:text="透過度: 100%"
+                android:textSize="15sp"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btn_op_minus"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="−"
+                android:textSize="22sp"
+                android:padding="0dp"/>
+
+            <Button
+                android:id="@+id/btn_op_plus"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="＋"
+                android:textSize="22sp"
+                android:padding="0dp"
+                android:layout_marginStart="6dp"/>
         </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seek_opacity"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:max="20"
+            android:progress="20"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="0% = 透明 / 100% = 不透明 （5%刻み）"
+            android:textSize="11sp"
+            android:textColor="#999"/>
 
         <TextView
             android:layout_width="match_parent"

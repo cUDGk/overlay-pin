@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var previewImg: ImageView
     private lateinit var btnAccess: Button
     private lateinit var btnOverlayPerm: Button
-    private lateinit var swTranslucent: Switch
+    private lateinit var opacityLabel: TextView
+    private lateinit var opacityBar: SeekBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,8 @@ class MainActivity : AppCompatActivity() {
         previewImg = findViewById(R.id.preview_img)
         btnAccess = findViewById(R.id.btn_access)
         btnOverlayPerm = findViewById(R.id.btn_perm)
-        swTranslucent = findViewById(R.id.sw_translucent)
+        opacityLabel = findViewById(R.id.lbl_opacity)
+        opacityBar = findViewById(R.id.seek_opacity)
 
         findViewById<Button>(R.id.btn_pick).setOnClickListener { pickMedia() }
         btnAccess.setOnClickListener { openAccessibilitySettings() }
@@ -72,11 +74,22 @@ class MainActivity : AppCompatActivity() {
             applyPct((Prefs.getSizePct(this) + 5).coerceAtMost(200))
         }
 
-        swTranslucent.isChecked = Prefs.isTranslucent(this)
-        swTranslucent.setOnCheckedChangeListener { _, on ->
-            Prefs.setTranslucent(this, on)
-            refreshPreview()
-            OverlayAccessibilityService.notifyChanged()
+        opacityBar.max = 20
+        opacityBar.progress = (Prefs.getOpacityPct(this) / 5).coerceIn(0, 20)
+        updateOpacityLabel(opacityBar.progress)
+        opacityBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                if (!fromUser) return
+                applyOpacity(p * 5)
+            }
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
+        })
+        findViewById<Button>(R.id.btn_op_minus).setOnClickListener {
+            applyOpacity((Prefs.getOpacityPct(this) - 5).coerceAtLeast(0))
+        }
+        findViewById<Button>(R.id.btn_op_plus).setOnClickListener {
+            applyOpacity((Prefs.getOpacityPct(this) + 5).coerceAtMost(100))
         }
 
         previewFrame.setOnTouchListener { v, e ->
@@ -129,6 +142,20 @@ class MainActivity : AppCompatActivity() {
         OverlayAccessibilityService.notifyChanged()
     }
 
+    private fun updateOpacityLabel(progress: Int) {
+        opacityLabel.text = "透過度: ${progress * 5}%"
+    }
+
+    private fun applyOpacity(pct: Int) {
+        Prefs.setOpacityPct(this, pct)
+        val p = (pct / 5).coerceIn(0, 20)
+        if (opacityBar.progress != p) opacityBar.progress = p
+        updateOpacityLabel(p)
+        refresh()
+        refreshPreview()
+        OverlayAccessibilityService.notifyChanged()
+    }
+
     private fun sizePreviewToScreenAspect(parentWidth: Int) {
         val dm = resources.displayMetrics
         val sw = dm.widthPixels.toFloat()
@@ -150,14 +177,14 @@ class MainActivity : AppCompatActivity() {
         val hasOverlay = Settings.canDrawOverlays(this)
         val hasAccess = OverlayAccessibilityService.isAvailable()
         val running = OverlayAccessibilityService.isShowing()
-        val translucent = Prefs.isTranslucent(this)
+        val opacity = Prefs.getOpacityPct(this)
         val kind = if (Prefs.isVideo(this)) "動画" else "画像"
         status.text = buildString {
             append("メディア:").append(if (uri != null) "✓$kind" else "×").append(" / ")
             append("Accessibility:").append(if (hasAccess) "✓" else "×").append(" / ")
             append("表示:").append(if (running) "ON" else "OFF").append("\n")
             append("オーバーレイ権限:").append(if (hasOverlay) "✓" else "×").append(" / ")
-            append("半透明:").append(if (translucent) "ON" else "OFF")
+            append("透過度:").append(opacity).append("%")
         }
         btnAccess.text = if (hasAccess) "Accessibility: 有効" else "Accessibility を有効化（重要）"
         btnAccess.isEnabled = !hasAccess
@@ -193,7 +220,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             previewImg.setImageResource(0)
         }
-        previewImg.alpha = if (Prefs.isTranslucent(this)) 0.5f else 1f
+        previewImg.alpha = Prefs.getAlpha(this)
 
         val dm = resources.displayMetrics
         val screenShort = min(dm.widthPixels, dm.heightPixels).toFloat()
