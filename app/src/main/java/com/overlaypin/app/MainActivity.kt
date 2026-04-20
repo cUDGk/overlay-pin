@@ -30,6 +30,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnOverlayPerm: Button
     private lateinit var opacityLabel: TextView
     private lateinit var opacityBar: SeekBar
+    private lateinit var xLabel: TextView
+    private lateinit var yLabel: TextView
+    private lateinit var xBar: SeekBar
+    private lateinit var yBar: SeekBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +49,10 @@ class MainActivity : AppCompatActivity() {
         btnOverlayPerm = findViewById(R.id.btn_perm)
         opacityLabel = findViewById(R.id.lbl_opacity)
         opacityBar = findViewById(R.id.seek_opacity)
+        xLabel = findViewById(R.id.lbl_x)
+        yLabel = findViewById(R.id.lbl_y)
+        xBar = findViewById(R.id.seek_x)
+        yBar = findViewById(R.id.seek_y)
 
         findViewById<Button>(R.id.btn_pick).setOnClickListener { pickMedia() }
         btnAccess.setOnClickListener { openAccessibilitySettings() }
@@ -90,6 +98,44 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.btn_op_plus).setOnClickListener {
             applyOpacity((Prefs.getOpacityPct(this) + 5).coerceAtMost(100))
+        }
+
+        // X/Y position sliders — 0..100, steps of 1.
+        xBar.max = 100
+        yBar.max = 100
+        xBar.progress = (Prefs.getFracX(this) * 100f).toInt().coerceIn(0, 100)
+        yBar.progress = (Prefs.getFracY(this) * 100f).toInt().coerceIn(0, 100)
+        updateXLabel(xBar.progress); updateYLabel(yBar.progress)
+        xBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                if (!fromUser) return
+                applyFracX(p)
+            }
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
+        })
+        yBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, p: Int, fromUser: Boolean) {
+                if (!fromUser) return
+                applyFracY(p)
+            }
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
+        })
+        findViewById<Button>(R.id.btn_x_minus).setOnClickListener {
+            applyFracX((xBar.progress - 1).coerceAtLeast(0))
+        }
+        findViewById<Button>(R.id.btn_x_plus).setOnClickListener {
+            applyFracX((xBar.progress + 1).coerceAtMost(100))
+        }
+        findViewById<Button>(R.id.btn_y_minus).setOnClickListener {
+            applyFracY((yBar.progress - 1).coerceAtLeast(0))
+        }
+        findViewById<Button>(R.id.btn_y_plus).setOnClickListener {
+            applyFracY((yBar.progress + 1).coerceAtMost(100))
+        }
+        findViewById<Button>(R.id.btn_center).setOnClickListener {
+            applyFracX(50); applyFracY(50)
         }
 
         previewFrame.setOnTouchListener { v, e ->
@@ -244,8 +290,38 @@ class MainActivity : AppCompatActivity() {
         val fx = (e.x / fw).coerceIn(0f, 1f)
         val fy = (e.y / fh).coerceIn(0f, 1f)
         Prefs.setFrac(this, fx, fy)
+        syncSlidersFromPrefs()
         positionPreviewImage()
         OverlayAccessibilityService.notifyChanged()
+    }
+
+    private fun updateXLabel(p: Int) { xLabel.text = "X位置: $p%" }
+    private fun updateYLabel(p: Int) { yLabel.text = "Y位置: $p%" }
+
+    private fun applyFracX(p: Int) {
+        val fx = p / 100f
+        Prefs.setFrac(this, fx, Prefs.getFracY(this))
+        if (xBar.progress != p) xBar.progress = p
+        updateXLabel(p)
+        positionPreviewImage()
+        OverlayAccessibilityService.notifyChanged()
+    }
+    private fun applyFracY(p: Int) {
+        val fy = p / 100f
+        Prefs.setFrac(this, Prefs.getFracX(this), fy)
+        if (yBar.progress != p) yBar.progress = p
+        updateYLabel(p)
+        positionPreviewImage()
+        OverlayAccessibilityService.notifyChanged()
+    }
+    /** Pull slider positions from Prefs — called after preview drag so the
+     *  explicit X/Y controls stay in sync. */
+    private fun syncSlidersFromPrefs() {
+        val px = (Prefs.getFracX(this) * 100f).toInt().coerceIn(0, 100)
+        val py = (Prefs.getFracY(this) * 100f).toInt().coerceIn(0, 100)
+        if (xBar.progress != px) xBar.progress = px
+        if (yBar.progress != py) yBar.progress = py
+        updateXLabel(px); updateYLabel(py)
     }
 
     private fun positionPreviewImage() {
