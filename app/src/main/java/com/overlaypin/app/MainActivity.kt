@@ -189,7 +189,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateOpacityLabel(progress: Int) {
-        opacityLabel.text = "透過度: ${progress * 5}%"
+        opacityLabel.text = "不透明度: ${progress * 5}%"
     }
 
     private fun applyOpacity(pct: Int) {
@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity() {
             append("Accessibility:").append(if (hasAccess) "✓" else "×").append(" / ")
             append("表示:").append(if (running) "ON" else "OFF").append("\n")
             append("オーバーレイ権限:").append(if (hasOverlay) "✓" else "×").append(" / ")
-            append("透過度:").append(opacity).append("%")
+            append("不透明度:").append(opacity).append("%")
         }
         btnAccess.text = if (hasAccess) "Accessibility: 有効" else "Accessibility を有効化（重要）"
         btnAccess.isEnabled = !hasAccess
