@@ -81,12 +81,50 @@ Android SDK 35 + JDK 17+ が必要。`local.properties` に `sdk.dir=...` を書
 
 1. アプリ起動
 2. **「画像を選択」** で画像/GIF/動画を選ぶ
-3. **「Accessibility を有効化」** で設定を開き、OverlayPin のトグルをON
-   - Xiaomi系で「制限された設定」ブロックに引っかかる場合は、アプリ詳細画面の「⋮」メニューから「制限された設定を許可」
-4. **「オーバーレイ権限を許可」** で権限付与
-5. プレビュー内をドラッグして位置決定
-6. サイズ・半透明モードを調整
+3. **「Accessibility を有効化」** → 後述の手順でONにする
+4. **「オーバーレイ権限を許可」** で権限付与（通常の権限画面、ONにするだけ）
+5. プレビュー内をドラッグ（または X/Y スライダ）で位置決定
+6. サイズ・不透明度を調整
 7. **「表示開始」** で常時最前面に表示
+
+### Accessibility Service を有効化
+
+本アプリは **`TYPE_ACCESSIBILITY_OVERLAY`** で表示を行う。一部のROM（特に MIUI / HyperOS）が `TYPE_APPLICATION_OVERLAY` に半透明装飾を被せる挙動を回避するため。Accessibility 権限の許可が必須。
+
+#### 通常手順（素のAndroid・ほとんどのROM）
+
+1. アプリ画面の **「Accessibility を有効化」** ボタンをタップ
+2. 開いた設定画面で **「ダウンロードしたアプリ」** または **「インストールされたサービス」** を選ぶ
+3. **OverlayPin** を選ぶ
+4. トグルを **ON** → 確認ダイアログで「許可」
+
+#### MIUI / HyperOS で「制限された設定」ブロックが出る場合
+
+サイドロードしたアプリの Accessibility は Android 13+ / MIUI でデフォルトブロックされる。以下のどちらかで解除:
+
+**方法A: 端末だけで解除**
+
+1. 設定 → アプリ → アプリを管理 → **OverlayPin** を選ぶ
+2. 画面右上の「⋮」（三点メニュー）をタップ
+3. **「制限された設定を許可」** (英語: `Allow restricted settings`) を選ぶ → 確認
+4. 通常手順の 2〜4 に戻って有効化
+
+メニュー名は MIUI バージョンで表記ゆれあり:
+- 「制限された設定を許可」
+- 「制限付き設定を許可」
+- 「制限されている設定を有効化」
+
+**方法B: ADB で一発解除**
+
+```bash
+adb shell appops set com.overlaypin.app ACCESS_RESTRICTED_SETTINGS allow
+```
+
+これで `ACCESS_RESTRICTED_SETTINGS: allow` に設定され、以降は通常手順の 2〜4 で有効化できる。
+
+#### 確認
+
+アプリ画面のステータス行に `Accessibility: ✓` と出ていれば完了。
 
 ### クイック設定タイル
 
